@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  server:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    environment:
+      ARENA_HTTP_ADDR: ":8080"
+      ARENA_REDIS_ADDR: "redis:6379"
+      ARENA_MYSQL_DSN: "arena:arena@tcp(mysql:3306)/arena?parseTime=true"
+      ARENA_JWT_SECRET: "dev-secret"
+      ARENA_TICK_MS: "50"
+      ARENA_PLAYERS_PER_ROOM: "2"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+      - mysql
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: arena
+      MYSQL_USER: arena
+      MYSQL_PASSWORD: arena
+    ports:
+      - "3306:3306"
+
+  prometheus:
+    image: prom/prometheus:v2.51.2
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"

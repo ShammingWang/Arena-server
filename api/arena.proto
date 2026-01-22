@@ -1,0 +1,101 @@
+syntax = "proto3";
+
+package protocol;
+
+enum MsgType {
+  MSG_UNKNOWN = 0;
+  MSG_PING = 1;
+  MSG_PONG = 2;
+  MSG_LOGIN_REQ = 10;
+  MSG_LOGIN_RESP = 11;
+  MSG_RECONNECT_REQ = 12;
+  MSG_RECONNECT_RESP = 13;
+  MSG_MATCH_REQ = 20;
+  MSG_MATCH_RESP = 21;
+  MSG_PLAYER_INPUT = 30;
+  MSG_SKILL_CAST = 31;
+  MSG_ROOM_SNAPSHOT = 40;
+  MSG_ROOM_OVER = 41;
+  MSG_ERROR_RESP = 90;
+}
+
+message Envelope {
+  MsgType type = 1;
+  uint64 seq = 2;
+  bytes body = 3;
+  int32 version = 4;
+}
+
+message Ping {
+  int64 client_ts = 1;
+}
+
+message Pong {
+  int64 client_ts = 1;
+  int64 server_ts = 2;
+}
+
+message LoginReq {
+  string username = 1;
+}
+
+message LoginResp {
+  string player_id = 1;
+  string access_token = 2;
+  string reconnect_token = 3;
+}
+
+message ReconnectReq {
+  string reconnect_token = 1;
+}
+
+message ReconnectResp {
+  string player_id = 1;
+  string room_id = 2;
+  bool ok = 3;
+  string reason = 4;
+}
+
+message MatchReq {
+  string mode = 1;
+}
+
+message MatchResp {
+  string match_id = 1;
+  string room_id = 2;
+  repeated string players = 3;
+}
+
+message PlayerInput {
+  float dx = 1;
+  float dy = 2;
+}
+
+message SkillCast {
+  int32 skill_id = 1;
+  string target_id = 2;
+}
+
+message PlayerSnapshot {
+  string player_id = 1;
+  float x = 2;
+  float y = 3;
+  int32 hp = 4;
+  int32 skill_cd = 5;
+}
+
+message RoomSnapshot {
+  string room_id = 1;
+  int64 tick = 2;
+  repeated PlayerSnapshot players = 3;
+}
+
+message RoomOver {
+  string room_id = 1;
+  string winner_id = 2;
+}
+
+message ErrorResp {
+  int32 code = 1;
+  string message = 2;
+}
