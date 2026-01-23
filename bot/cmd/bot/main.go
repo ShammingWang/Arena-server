@@ -77,7 +77,7 @@ type Bot struct {
 	id         int
 	addr       string
 	conn       *websocket.Conn
-	send       chan []byte
+	sendCh     chan []byte
 	stats      *Stats
 	tracker    *RoomTracker
 	mode       string
@@ -125,7 +125,7 @@ func NewBot(id int, addr string, mode string, stats *Stats, tracker *RoomTracker
 	return &Bot{
 		id:      id,
 		addr:    addr,
-		send:    make(chan []byte, 128),
+		sendCh:  make(chan []byte, 128),
 		stats:   stats,
 		tracker: tracker,
 		mode:    mode,
@@ -176,7 +176,7 @@ func (b *Bot) send(msgType protocol.MsgType, msg proto.Message) error {
 		return err
 	}
 	select {
-	case b.send <- payload:
+	case b.sendCh <- payload:
 		return nil
 	default:
 		return nil
@@ -236,7 +236,7 @@ func (b *Bot) handleMessage(data []byte) {
 }
 
 func (b *Bot) writeLoop() {
-	for data := range b.send {
+	for data := range b.sendCh {
 		_ = b.conn.WriteMessage(websocket.BinaryMessage, data)
 	}
 }
