@@ -4,7 +4,7 @@ MiniArena is a Go-based multiplayer room battle service with matchmaking, room a
 
 ## Layout
 
-```
+```bash
 / server
   /cmd/server          Entry point
   /internal/...        Server packages
@@ -19,7 +19,7 @@ MiniArena is a Go-based multiplayer room battle service with matchmaking, room a
 
 1) Start dependencies
 
-```
+```bash
 cd deploy
 
 docker compose up -d
@@ -27,13 +27,13 @@ docker compose up -d
 
 2) Run server
 
-```
+```bash
 go run ./server/cmd/server
 ```
 
 3) Run bots (100 clients, 50 rooms)
 
-```
+```bash
 go run ./bot/cmd/bot --addr ws://127.0.0.1:8080/ws --bots 100 --rooms 50 --mode mixed
 ```
 
